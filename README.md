@@ -1,5 +1,7 @@
 # Cerberus AI-Agent Runtime Check
 
+![Cerberus AI-Agent Runtime Check](./branding/marketplace-banner.png)
+
 **Test one AI-agent workflow for dangerous tool-execution paths in CI.**
 
 This Action runs your CI against [Cerberus](https://github.com/Odingard/cerberus) — an
