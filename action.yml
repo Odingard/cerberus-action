@@ -1,5 +1,5 @@
 name: 'Cerberus AI-Agent Runtime Check'
-description: 'Run a reproducible Cerberus allow/block self-check in CI: a benign workflow that should run, and a Lethal-Trifecta workflow that should be blocked. Powered by Cerberus.'
+description: 'Reproducible Cerberus allow/block self-check for CI: a benign path runs, a dangerous one is blocked.'
 author: 'Odingard'
 
 branding:
