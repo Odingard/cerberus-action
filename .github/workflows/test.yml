@@ -1,0 +1,29 @@
+name: Self-test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  report-only:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run the action (report-only)
+        id: cerberus
+        uses: ./
+      - name: Assert verdict
+        run: |
+          echo "verdict=${{ steps.cerberus.outputs.verdict }}"
+          test "${{ steps.cerberus.outputs.verdict }}" = "PASS"
+
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run the action as a gate
+        uses: ./
+        with:
+          fail-on: unexpected

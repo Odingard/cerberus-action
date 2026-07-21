@@ -1,0 +1,83 @@
+name: 'Cerberus AI-Agent Runtime Check'
+description: 'Test one AI-agent workflow for dangerous tool-execution paths in CI. Powered by Cerberus.'
+author: 'Odingard'
+
+branding:
+  icon: 'shield'
+  color: 'red'
+
+inputs:
+  core-version:
+    description: 'Version of @cerberus-ai/core to install (npm dist-tag or exact version).'
+    required: false
+    default: 'latest'
+  node-version:
+    description: 'Node.js version to run the check under.'
+    required: false
+    default: '20'
+  fail-on:
+    description: >-
+      When to fail the job. "never" (default) is report-only — the check never
+      breaks your build. "unexpected" fails the job only if protection did not
+      behave as expected (a dangerous path was NOT blocked, or a benign path was
+      falsely blocked).
+    required: false
+    default: 'never'
+  report-path:
+    description: 'Path (relative to the workspace) for the JSON evidence report.'
+    required: false
+    default: 'cerberus-report.json'
+  upload-artifact:
+    description: 'Upload the JSON report as a workflow artifact.'
+    required: false
+    default: 'true'
+
+outputs:
+  verdict:
+    description: 'Overall verdict: PASS, FLAG, or FAIL.'
+    value: ${{ steps.run.outputs.verdict }}
+  report-path:
+    description: 'Path to the JSON evidence report.'
+    value: ${{ inputs.report-path }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Install @cerberus-ai/core and stage the runner
+      id: install
+      shell: bash
+      run: |
+        set -euo pipefail
+        WORKDIR="${RUNNER_TEMP}/cerberus-action"
+        mkdir -p "$WORKDIR"
+        cd "$WORKDIR"
+        npm init -y >/dev/null 2>&1
+        npm pkg set type=module >/dev/null 2>&1
+        echo "Installing @cerberus-ai/core@${{ inputs.core-version }} ..."
+        npm install "@cerberus-ai/core@${{ inputs.core-version }}" --no-audit --no-fund --silent
+        # Run from the workdir so the bare import resolves against its node_modules.
+        cp "${GITHUB_ACTION_PATH}/scripts/run.mjs" "$WORKDIR/run.mjs"
+        echo "workdir=$WORKDIR" >> "$GITHUB_OUTPUT"
+
+    - name: Run the Cerberus runtime check
+      id: run
+      shell: bash
+      working-directory: ${{ steps.install.outputs.workdir }}
+      env:
+        CERB_FAIL_ON: ${{ inputs.fail-on }}
+        CERB_REPORT_PATH: ${{ inputs.report-path }}
+        CERB_CORE_VERSION: ${{ inputs.core-version }}
+      run: node run.mjs
+
+    - name: Upload evidence report
+      if: ${{ inputs.upload-artifact == 'true' && always() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: cerberus-report
+        path: ${{ inputs.report-path }}
+        if-no-file-found: warn
