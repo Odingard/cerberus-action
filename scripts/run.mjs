@@ -195,8 +195,9 @@ if (summaryFile) {
 
 **Verdict: ${verdict}** · \`@cerberus-ai/core@${installedVersion}\`
 
-Checks one AI-agent workflow for dangerous tool-execution paths at the tool-call
-boundary — in-process, before the action fires.
+A reproducible allow/block self-check: a benign workflow that should run and a
+Lethal-Trifecta workflow that should be blocked at the tool-call boundary —
+in-process, before the action fires. Runs bundled fixtures, not your own code.
 
 | Workflow | Expected | Result | Risk score | Action | Outbound executed |
 |---|---|---|---|---|---|

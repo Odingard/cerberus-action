@@ -1,5 +1,5 @@
 name: 'Cerberus AI-Agent Runtime Check'
-description: 'Test one AI-agent workflow for dangerous tool-execution paths in CI. Powered by Cerberus.'
+description: 'Run a reproducible Cerberus allow/block self-check in CI: a benign workflow that should run, and a Lethal-Trifecta workflow that should be blocked. Powered by Cerberus.'
 author: 'Odingard'
 
 branding:
@@ -10,11 +10,11 @@ inputs:
   core-version:
     description: 'Version of @cerberus-ai/core to install (npm dist-tag or exact version).'
     required: false
-    default: 'latest'
+    default: '3.1.0'
   node-version:
     description: 'Node.js version to run the check under.'
     required: false
-    default: '20'
+    default: '24'
   fail-on:
     description: >-
       When to fail the job. "never" (default) is report-only — the check never
@@ -44,7 +44,7 @@ runs:
   using: 'composite'
   steps:
     - name: Set up Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v5
       with:
         node-version: ${{ inputs.node-version }}
 
@@ -76,7 +76,7 @@ runs:
 
     - name: Upload evidence report
       if: ${{ inputs.upload-artifact == 'true' && always() }}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: cerberus-report
         path: ${{ inputs.report-path }}

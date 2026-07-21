@@ -2,13 +2,18 @@
 
 ![Cerberus AI-Agent Runtime Check](./branding/marketplace-banner.png)
 
-**Test one AI-agent workflow for dangerous tool-execution paths in CI.**
+**Run a reproducible Cerberus allow/block self-check in CI.**
 
-This Action runs your CI against [Cerberus](https://github.com/Odingard/cerberus) — an
-in-process runtime security layer for AI agents. It exercises two agent
-workflows through Cerberus's `guard()` tool-call boundary and produces a
-bounded **PASS / FLAG / BLOCK** report plus a uploaded evidence artifact — no
-sales call, no data leaving the runner.
+This Action runs two **bundled, maintained fixtures** through
+[Cerberus](https://github.com/Odingard/cerberus-core) — an in-process runtime
+security layer for AI agents — at the `guard()` tool-call boundary, and
+produces a bounded **PASS / FLAG / BLOCK** report plus an uploaded evidence
+artifact. No sales call, no data leaving the runner.
+
+> **Note:** this is a self-check of Cerberus's allow/block behavior against two
+> fixtures the Action ships with — it does **not** analyze your own
+> application's workflows. It's a fast, honest "does Cerberus block the
+> dangerous path and leave the benign path alone?" signal for CI.
 
 1. **A benign workflow** — reads trusted data and sends a normal notification.
    Expected: it runs (Cerberus does not get in the way).
@@ -45,8 +50,8 @@ that fails when protection misbehaves:
 
 | Input | Default | Description |
 |---|---|---|
-| `core-version` | `latest` | Version of `@cerberus-ai/core` to install (dist-tag or exact version). |
-| `node-version` | `20` | Node.js version to run the check under. |
+| `core-version` | `3.1.0` | Version of `@cerberus-ai/core` to install (dist-tag or exact version). |
+| `node-version` | `24` | Node.js version to run the check under. |
 | `fail-on` | `never` | `never` (report only) or `unexpected` (fail the job if protection did not behave as expected). |
 | `report-path` | `cerberus-report.json` | Path (relative to the workspace) for the JSON evidence report. |
 | `upload-artifact` | `true` | Upload the JSON report as a workflow artifact. |
