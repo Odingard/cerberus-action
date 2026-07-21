@@ -65,8 +65,15 @@ that fails when protection misbehaves:
 
 ## What the report looks like
 
-The Action writes a `$GITHUB_STEP_SUMMARY` table in the run UI and uploads the
-full JSON as the `cerberus-report` artifact:
+The Action writes a `$GITHUB_STEP_SUMMARY` table in the run UI:
+
+![Cerberus run summary](./branding/screenshot-1-summary.png)
+
+Drop it into CI in one block — the full JSON is uploaded as the `cerberus-report` artifact:
+
+![Usage and JSON evidence](./branding/screenshot-2-usage.png)
+
+The raw JSON evidence:
 
 ```json
 {
